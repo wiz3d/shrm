@@ -14,7 +14,7 @@ class CompanyHelper
 {
     const DEFAULT_PERPAGE = 24;
 
-    public function getBuilder(array $filters = [], int $companyId = null)
+    public function getBuilder(array $filters = [], int $companyId = null, array $paginations = [])
     {
         $builder = CompanyModel::with(['tags', 'targetMarkets', 'subcategories']);
 
@@ -45,10 +45,11 @@ class CompanyHelper
         }
 
         ## add meta data sorting per page
-        $perPage = !empty($filters['per_page']) ? $filters['per_page'] : self::DEFAULT_PERPAGE;
+        $perPage = !empty($paginations['per_page']) ? $paginations['per_page'] : self::DEFAULT_PERPAGE;
 
         ## sort page
-        $page = !empty($filters['page']) ? $filters['page'] : 1;
+        $page = !empty($paginations['page']) ? $paginations['page'] : 1;
+
         return $builder->paginate($perPage, ['*'], 'page', $page);
     }
 }
