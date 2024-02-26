@@ -22,8 +22,8 @@ use Illuminate\Support\Facades\Route;
 Route::group(['namespace'=>'Api\V1', 'prefix' => 'v1'], function () {
     Route::get("catalog/categories", [\App\Http\Controllers\Api\V1\CategoryController::class, 'index']);
     Route::get("catalog/categories/{categoryId}", [\App\Http\Controllers\Api\V1\CategoryController::class, 'show']);
-    Route::get("catalog/subcaterories", [\App\Http\Controllers\Api\V1\SubcategoryController::class, 'index']);
-    Route::get("catalog/subcaterories/{subcategories}", [\App\Http\Controllers\Api\V1\SubcategoryController::class, 'show']);
+    Route::get("catalog/subcategories", [\App\Http\Controllers\Api\V1\SubcategoryController::class, 'index']);
+    Route::get("catalog/subcategories/{subcategories}", [\App\Http\Controllers\Api\V1\SubcategoryController::class, 'show']);
     Route::get("catalog/tags", [\App\Http\Controllers\Api\V1\TagController::class, 'index']);
     Route::get("catalog/target-markets", [\App\Http\Controllers\Api\V1\TargetMarketController::class, 'index']);
     Route::get("catalog/companies", [\App\Http\Controllers\Api\V1\CompanyController::class, 'index']);

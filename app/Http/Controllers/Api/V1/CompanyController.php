@@ -28,7 +28,6 @@ class CompanyController extends Controller
     public function show(\Illuminate\Http\Request $request, int $companyId)
     {
         try {
-            $filters = $request->query();
             return new CompanyCollection($this->companyHelper->getBuilder([], $companyId));
         } catch (\Throwable $e) {
             return response()->json(['success' => false, 'error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -38,7 +37,11 @@ class CompanyController extends Controller
     public function index(\Illuminate\Http\Request $request)
     {
         try {
-            $filters = $request->query();
+            $filters = [
+                'category' => $request->input('filter.category'),
+                'subcategory' => $request->input('filter.subCategory'),
+                'tags' => $request->input('filter.tags')
+            ];
             return new CompanyCollection($this->companyHelper->getBuilder($filters));
         } catch (\Throwable $e) {
             return response()->json(['success' => false, 'error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
