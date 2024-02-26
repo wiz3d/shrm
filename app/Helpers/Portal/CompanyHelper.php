@@ -18,8 +18,6 @@ class CompanyHelper
     {
         $builder = CompanyModel::with(['tags', 'targetMarkets', 'subcategories']);
 
-        Log::info(print_r($filters, true));
-
         ## in case if is being getting one category data by id
         if ($companyId) {
             $builder->whereId($companyId);
@@ -42,6 +40,11 @@ class CompanyHelper
             $builder->whereHas('tags', function ($query) use ($tags) {
                 $query->whereIn('tag_id', $tags);
             });
+        }
+
+        if (!empty($filters['company_name'])) {
+            $companyName = '%' . trim($filters['company_name']) . '%';
+            $builder->where('name', 'LIKE', $companyName);
         }
 
         ## add meta data sorting per page

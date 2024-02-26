@@ -41,7 +41,8 @@ class CompanyController extends Controller
             $filters = [
                 'category' => $request->input('filter.category'),
                 'subcategory' => $request->input('filter.subCategory'),
-                'tags' => $request->input('filter.tags')
+                'tags' => $request->input('filter.tags'),
+                'company_name' => $request->input('search'),
             ];
             return new CompanyCollection($this->companyHelper->getBuilder($filters, null, $paginations));
         } catch (\Throwable $e) {
