@@ -7,6 +7,7 @@ use App\Models\Subcategory as SubcategoryModel;
 use App\Models\TargetMarket as TargetMarket;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 /**
  * Class Company
@@ -48,5 +49,14 @@ class Company extends Model
     public function targetMarkets()
     {
         return $this->belongsToMany(TargetMarket::class, 'company_target_market');
+    }
+
+    protected function images(): Attribute
+    {
+        return new Attribute(
+            get: function ($value) {
+                return $value ? json_decode($value, true) : [];
+            }
+        );
     }
 }
