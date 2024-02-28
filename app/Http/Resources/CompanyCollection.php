@@ -21,11 +21,23 @@ class CompanyCollection extends ResourceCollection
     {
         try {
             return [
-                'data' => $this->collection
+                'data' => $this->collection->transform(function ($company) {
+                    $company->logo = asset("images/logos/{$company->logo}");
+                    if (!empty($company->images)) {
+                        $images = is_string($company->images) ? json_decode($company->images, true) : $company->images;
+                        $company->images = array_map(function ($imageName) {
+                            return asset("images/companies/{$imageName}");
+                        }, $images);
+                    } else {
+                        $company->images = [];
+                    }
+                    return $company;
+                }),
             ];
         } catch (\Exception $e) {
             Log::error($e);
             return ["Exception: category data(s) error:{$e->getMessage()}"];
         }
     }
+
 }

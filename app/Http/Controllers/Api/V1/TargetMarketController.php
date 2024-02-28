@@ -40,7 +40,10 @@ class TargetMarketController extends Controller
     {
         try {
             $filters = $request->query();
-            return new TargetMarketCollection($this->targetMarketHelper->getBuilder($filters));
+            $cacheKey = 'target-markets.index.' . md5(serialize($request->query()));
+            return Cache::remember($cacheKey, 60*60, function () use ($filters) {
+                return new TargetMarketCollection($this->targetMarketHelper->getBuilder($filters));
+            });
         } catch (\Throwable $e) {
             return response()->json(['success' => false, 'error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }

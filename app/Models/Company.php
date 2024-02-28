@@ -20,6 +20,9 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
  * @property $web_site
  * @property $logo
  * @property $description
+ * @property $expanded_title
+ * @property $expanded_description
+ * @property $images
  *
  * @property $created_at
  * @property $updated_at
@@ -29,7 +32,11 @@ class Company extends Model
 {
     protected $table = 'companies';
     protected $primaryKey = 'id';
-    protected $fillable = ['category_id', 'name', 'web_site', 'logo', 'description'];
+    protected $fillable = ['category_id', 'name', 'web_site', 'logo', 'description', 'expanded_title', 'expanded_description'];
+
+    protected $casts = [
+        'images' => 'array',
+    ];
 
     public function category()
     {
@@ -51,12 +58,12 @@ class Company extends Model
         return $this->belongsToMany(TargetMarket::class, 'company_target_market');
     }
 
-    protected function images(): Attribute
-    {
-        return new Attribute(
-            get: function ($value) {
-                return $value ? json_decode($value, true) : [];
-            }
-        );
-    }
+//    protected function images(): Attribute
+//    {
+//        return new Attribute(
+//            get: function ($value) {
+//                return $value ?: [];
+//            }
+//        );
+//    }
 }

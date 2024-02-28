@@ -28,7 +28,10 @@ class CompanyController extends Controller
     public function show(\Illuminate\Http\Request $request, int $companyId)
     {
         try {
-            return new CompanyCollection($this->companyHelper->getBuilder([], $companyId));
+            $cacheKey = 'companies.id:'.$companyId;
+            return Cache::remember($cacheKey, 60*60, function () use ($companyId) {
+                return new CompanyCollection($this->companyHelper->getBuilder([], $companyId));
+            });
         } catch (\Throwable $e) {
             return response()->json(['success' => false, 'error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -37,14 +40,17 @@ class CompanyController extends Controller
     public function index(\Illuminate\Http\Request $request)
     {
         try {
-            $paginations = $request->query();
-            $filters = [
-                'category' => $request->input('filter.category'),
-                'subcategory' => $request->input('filter.subCategory'),
-                'tags' => $request->input('filter.tags'),
-                'company_name' => $request->input('search'),
-            ];
-            return new CompanyCollection($this->companyHelper->getBuilder($filters, null, $paginations));
+            $cacheKey = 'companies.index.' . md5(serialize($request->query()));
+            return Cache::remember($cacheKey, 60*60, function () use ($request) {
+                $paginations = $request->query();
+                $filters = [
+                    'category' => $request->input('filter.category'),
+                    'subcategory' => $request->input('filter.subCategory'),
+                    'tags' => $request->input('filter.tags'),
+                    'company_name' => $request->input('search'),
+                ];
+                return new CompanyCollection($this->companyHelper->getBuilder($filters, null, $paginations));
+            });
         } catch (\Throwable $e) {
             return response()->json(['success' => false, 'error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }

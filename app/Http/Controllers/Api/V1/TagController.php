@@ -28,8 +28,10 @@ class TagController extends Controller
     public function show(\Illuminate\Http\Request $request, int $tagId)
     {
         try {
-            $filters = $request->query();
-            return new TagCollection($this->tagHelper->getBuilder([], $tagId));
+            $cacheKey = 'tags.show:' . $tagId;
+            return Cache::remember($cacheKey, 60*60, function () use ($tagId) {
+                return new TagCollection($this->tagHelper->getBuilder([], $tagId));
+            });
         } catch (\Throwable $e) {
             return response()->json(['success' => false, 'error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -39,7 +41,10 @@ class TagController extends Controller
     {
         try {
             $filters = $request->query();
-            return new TagCollection($this->tagHelper->getBuilder($filters));
+            $cacheKey = 'tags.index.' . md5(serialize($request->query()));
+            return Cache::remember($cacheKey, 60*60, function () use ($filters) {
+                return new TagCollection($this->tagHelper->getBuilder($filters));
+            });
         } catch (\Throwable $e) {
             return response()->json(['success' => false, 'error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }

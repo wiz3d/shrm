@@ -29,7 +29,11 @@ class SubcategoryController extends Controller
     {
         try {
             $filters = $request->query();
-            return new SubcategoryCollection($this->subcategoryHelper->getBuilder([], $subcategoryId));
+
+            $cacheKey = 'subcategories.show:' . $subcategoryId;
+            return Cache::remember($cacheKey, 60*60, function () use ($subcategoryId) {
+                return new SubcategoryCollection($this->subcategoryHelper->getBuilder([], $subcategoryId));
+            });
         } catch (\Throwable $e) {
             return response()->json(['success' => false, 'error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -39,7 +43,10 @@ class SubcategoryController extends Controller
     {
         try {
             $filters = $request->query();
-            return new SubcategoryCollection($this->subcategoryHelper->getBuilder($filters));
+            $cacheKey = 'subcategories.index.' . md5(serialize($request->query()));
+            return Cache::remember($cacheKey, 60*60, function () use ($filters) {
+                return new SubcategoryCollection($this->subcategoryHelper->getBuilder($filters));
+            });
         } catch (\Throwable $e) {
             return response()->json(['success' => false, 'error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
