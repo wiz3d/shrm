@@ -22,7 +22,7 @@ class CompanyCollection extends ResourceCollection
         try {
             return [
                 'data' => $this->collection->transform(function ($company) {
-                    $company->logo = asset("images/logos/{$company->logo}");
+                    $company->logo = $company->logo ? asset("images/logos/{$company->logo}") : null;
                     if (!empty($company->images)) {
                         $images = is_string($company->images) ? json_decode($company->images, true) : $company->images;
                         $company->images = array_map(function ($imageName) {
